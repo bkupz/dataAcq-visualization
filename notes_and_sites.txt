@@ -1,0 +1,17 @@
+notes and sites:
+    https://developers.google.com/chart/interactive/docs/gallery/controls
+    https://developers.google.com/chart/interactive/docs/gallery/motionchart
+    https://developers.google.com/chart/interactive/docs/queries
+
+    showing google drive folder:
+        <iframe src="https://drive.google.com/embeddedfolderview?id=YOURID#list" width="700" height="500" frameborder="0"></iframe>
+
+    getting urls?: 
+        https://developers.google.com/drive/v2/reference/children/list#try-it
+            
+        https://developers.google.com/drive/v2/reference/files/list
+        EX: https://gist.github.com/hubgit/3755293
+
+        http://www.codingsection.com/getting-api-key-and-client-id-for-google-drive-integration.html
+        http://www.codingsection.com/getting-list-of-files-and-folders-using-google-drive-api.html
+        https://developers.google.com/drive/v2/reference/files/list
