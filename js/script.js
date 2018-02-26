@@ -203,3 +203,16 @@ function drawChart(data, options, id) {
     var chart = new google.visualization.LineChart(document.getElementById(id));
     chart.draw(data, options);
 }
+
+document.Test = function() {
+    var query = new google.visualization.Query(url);
+    query.send(function(response){
+        if (response.isError()) {
+            console.log('URL Test Failed!');
+        } else {
+            console.log('URL Test Passed!');
+        }
+    });
+
+    return;
+}
