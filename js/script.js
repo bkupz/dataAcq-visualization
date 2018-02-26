@@ -12,25 +12,25 @@ function drawCharts() {
     var query = new google.visualization.Query(url+pages[1]);
     query.send(handleQueryResponsePosition);
 
-    var query = new google.visualization.Query(url+pages[1]);
+    var query = new google.visualization.Query(url+pages[2]);
     query.send(handleQueryResponseGasPres);
     
-    var query = new google.visualization.Query(url+pages[1]);
+    var query = new google.visualization.Query(url+pages[3]);
     query.send(handleQueryResponseOilTemp);
     
-    var query = new google.visualization.Query(url+pages[1]);
+    var query = new google.visualization.Query(url+pages[4]);
     query.send(handleQueryResponseCVT);
     
-    var query = new google.visualization.Query(url+pages[1]);
+    var query = new google.visualization.Query(url+pages[5]);
     query.send(handleQueryResponseForce);
     
-    var query = new google.visualization.Query(url+pages[1]);
+    var query = new google.visualization.Query(url+pages[6]);
     query.send(handleQueryResponseBrakePres);
     
-    var query = new google.visualization.Query(url+pages[1]);
+    var query = new google.visualization.Query(url+pages[7]);
     query.send(handleQueryResponseShockDisp);
     
-    var query = new google.visualization.Query(url+pages[1]);
+    var query = new google.visualization.Query(url+pages[8]);
     query.send(handleQueryResponseSteeringDisp);
 }
 
