@@ -9,3 +9,8 @@ To run our tests open the console and enter:
 ```
 document.Test();
 ```
+
+# References
+
+We are using a html template from:
+http://www.os-templates.com/free-basic-html5-templates
