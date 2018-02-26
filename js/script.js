@@ -214,5 +214,4 @@ document.Test = function() {
         }
     });
 
-    return;
 }
