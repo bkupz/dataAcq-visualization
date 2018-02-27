@@ -218,11 +218,29 @@
         });
       }
 
+      function retrieveAllFiles(callback) {
+        var retrievePageOfFiles = function(request, result) {
+          request.execute(function(resp) {
+            result = result.concat(resp.items);
+            var nextPageToken = resp.nextPageToken;
+            if (nextPageToken) {
+              request = gapi.client.drive.files.list({
+                'pageToken': nextPageToken
+              });
+              retrievePageOfFiles(request, result);
+            } else {
+              callback(result);
+            }
+          });
+        }
+        var initialRequest = gapi.client.drive.files.list();
+        retrievePageOfFiles(initialRequest, []);
+      }
+
     </script>
 
     <script async defer src="https://apis.google.com/js/api.js"
-      onload="this.onload=function(){};handleClientLoad()"
-      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+      onload="this.onload=function(){};handleClientLoad()">
     </script>
 	
     <!-- jQuery -->
