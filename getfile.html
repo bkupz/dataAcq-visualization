@@ -155,9 +155,11 @@
         if (isSignedIn) {
           authorizeButton.style.display = 'none';
           signoutButton.style.display = 'block';
-          listFiles();
+          //listFiles();
+          console.log("signed in");
           listFiles2();
         } else {
+          console.log("issue signing in");
           authorizeButton.style.display = 'block';
           signoutButton.style.display = 'none';
         }
