@@ -224,7 +224,7 @@
         });
       }
 
-      function retrieveAllFiles(callback) {
+      function retrieveAllFiles() {
         var retrievePageOfFiles = function(request, result) {
           request.execute(function(resp) {
             result = result.concat(resp.items);
@@ -235,7 +235,7 @@
               });
               retrievePageOfFiles(request, result);
             } else {
-              callback(result);
+              console.log(result);
             }
           });
         }
