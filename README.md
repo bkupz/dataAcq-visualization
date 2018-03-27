@@ -14,3 +14,7 @@ document.Test();
 
 We are using a html template from:
 http://www.os-templates.com/free-basic-html5-templates
+
+Other resources:
+https://stackoverflow.com/questions/18116152/how-do-i-get-a-file-list-for-a-google-drive-public-hosted-folder
+https://stackoverflow.com/questions/5180382/convert-json-data-to-a-html-table

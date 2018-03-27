@@ -1,14 +1,17 @@
-
+// Loads the google charts packages we need and calls draw charts
 google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawCharts);
 
+// Global variables to be used throughout the script
 var firstTime = true;
 var fileID ="1_JFqEI5z02JNDeSxHtCMOSUvBpxwxG5ubsNEc0KuKyM";
-
 var pages = ['&sheet=acceleration', '&sheet=position', '&sheet=gas-pres', '&sheet=oil-temp', '&sheet=cvt', '&sheet=force', '&sheet=brake-pres', '&sheet=shock-disp', '&sheet=steering-disp'];
-//var url = 'https://docs.google.com/spreadsheets/d/1_JFqEI5z02JNDeSxHtCMOSUvBpxwxG5ubsNEc0KuKyM/edit?usp=sharing';
+var API_KEY = 'AIzaSyBMiJQmBE6uxyrHau_zmKpuetSLPA-Sj78';
+var folderId = '1jFpcWj_H572aSLbYFWozFMCz7A6JngC-';
 
+// Wrapper function to draw each chart we wil need
 function drawCharts() {
+    // request url
     var url = "https://docs.google.com/spreadsheets/d/"+fileID+"/edit?usp=sharing";
     var query = new google.visualization.Query(url+pages[0]);
     query.send(handleQueryResponseAcceleration);
@@ -38,6 +41,11 @@ function drawCharts() {
     query.send(handleQueryResponseSteeringDisp);
 }
 
+/*
+
+    Group of funtions that create each graph.
+
+*/
 function handleQueryResponseAcceleration(response) {
     if (response.isError()) {
         console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
@@ -203,11 +211,19 @@ function handleQueryResponseSteeringDisp(response) {
     drawChart(data, options, id);
 }
 
+/*
+
+    End of the group.
+
+*/
+
+// Draws a chart
 function drawChart(data, options, id) {
     var chart = new google.visualization.LineChart(document.getElementById(id));
     chart.draw(data, options);
 }
 
+// Switchs view from main to getFile
 function switchToGetFile() {
     $("#container-main").css("display", "none");
     $("#container-getFile").css("display", "block");
@@ -217,29 +233,24 @@ function switchToGetFile() {
     }
 }
 
+// Switchs view from getFile to main
 function switchToMain() {
     $("#container-main").css("display", "block");
     $("#container-getFile").css("display", "none");
     drawCharts();
 }
 
-
-var API_KEY = 'AIzaSyBMiJQmBE6uxyrHau_zmKpuetSLPA-Sj78';
-
+// Gets the all files in a folder and creates a table 
 function listFilesInConsole() {
-    //https://stackoverflow.com/questions/18116152/how-do-i-get-a-file-list-for-a-google-drive-public-hosted-folder
-    var folderId = '1jFpcWj_H572aSLbYFWozFMCz7A6JngC-';
+    // request url
     var url = "https://www.googleapis.com/drive/v3/files?q='" + folderId + "'+in+parents&key=" + API_KEY;
     var promise = $.getJSON( url, function( data, status){
-        // on success
     });
         promise.done(function( data ){
-        console.log(data);
-        //https://stackoverflow.com/questions/5180382/convert-json-data-to-a-html-table
         var container = document.getElementById("files");
-        console.log(data.files.length);
         var length = data.files.length;
 
+        // Create table with headers
         var tbl = document.createElement('table');
         tbl.style.width = '100%';
         tbl.setAttribute('border', '1');
@@ -260,10 +271,8 @@ function listFilesInConsole() {
         tr.appendChild(td)
         tbdy.appendChild(tr);
 
+        // Loop through files and create an entry for each
         for(i = 0; i<length; i++) {
-            //var node = document.createElement('p');
-            //node.innerText = data.files[i].name;
-            //container.appendChild(node);
             var tr = document.createElement('tr');
             
             var td = document.createElement('td');
@@ -289,13 +298,15 @@ function listFilesInConsole() {
         container.appendChild(tbl)
         document.data = data;
 
-        getSelectedRadio();
+        // Create on change function for radio buttons
+        setRadioListeners();
         
     }).fail(function(){
-
+        console.log("ERROR: getting files");
     });
 }
 
+// Create radio button
 function createRadioElement(name, checked) {
     var radioHtml = '<input type="radio" name="' + name + '"';
     if ( checked ) {
@@ -309,7 +320,8 @@ function createRadioElement(name, checked) {
     return radioFragment.firstChild;
 }
 
-function getSelectedRadio() {
+// Create a listener for changes in the radio buttons
+function setRadioListeners() {
     $(document).on('change', ':radio[name="selection"]:checked', function () {
         var arOfVals = $(this).parent().nextAll().map(function () {
             return $(this).text();
@@ -320,6 +332,7 @@ function getSelectedRadio() {
 
 }
 
+// Function to test requests
 document.Test = function() {
     console.log("RUNNING UNIT TESTS...")
 
