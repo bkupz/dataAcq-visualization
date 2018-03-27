@@ -54,6 +54,7 @@ var promise = $.getJSON( url, function( data, status){
         tr.appendChild(td1)
 
         var td2 = document.createElement('td');
+        td2.className = "id";
         td2.appendChild(document.createTextNode(data.files[i].id))
         tr.appendChild(td2)
 
@@ -82,11 +83,12 @@ function createRadioElement(name, checked) {
     return radioFragment.firstChild;
 }
 
-function getRadioElement() {
-    var selectedVal = "";
-    var selected = $("#files input[type='radio']:checked");
-    if (selected.length > 0) {
-        selectedVal = selected.val();
-    }
-    console.log(selectedVal);
+function getSelectedRadio() {
+    $(document).on('change', ':radio[name="selection"]:checked', function () {
+        var arOfVals = $(this).parent().nextAll().map(function () {
+            return $(this).text();
+        }).get();
+        console.log(arOfVals[2]);
+    });
+
 }
