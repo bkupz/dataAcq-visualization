@@ -54,6 +54,7 @@ var promise = $.getJSON( url, function( data, status){
         tr.appendChild(td1)
 
         var td2 = document.createElement('td');
+        td2.className = "id";
         td2.appendChild(document.createTextNode(data.files[i].id))
         tr.appendChild(td2)
 
@@ -84,18 +85,12 @@ function createRadioElement(name, checked) {
 
 
 
-function printdata() {
-    //https://stackoverflow.com/questions/18116152/how-do-i-get-a-file-list-for-a-google-drive-public-hosted-folder
-    var folderId = "1omLjX3A8M-YWrUu4Q4tGlCKmZJyN7tFfp4DNJk-yEZ0";
-    //var url = "https://docs.google.com/spreadsheets/export?id=1omLjX3A8M-YWrUu4Q4tGlCKmZJyN7tFfp4DNJk-yEZ0&exportFormat=csv";
-    var url = "https://www.googleapis.com/drive/v3/files/" + folderId + "/export?mimeType=text&key=" + API_KEY;
-    var promise = $.getJSON( url, function( data, status){
-        // on success
-    });
-        promise.done(function( data ){
-        console.log(data);
-    }).fail(function(){
-    
+function getSelectedRadio() {
+    $(document).on('change', ':radio[name="selection"]:checked', function () {
+        var arOfVals = $(this).parent().nextAll().map(function () {
+            return $(this).text();
+        }).get();
+        console.log(arOfVals[2]);
     });
 
 }
