@@ -8,6 +8,7 @@ var fileID ="1_JFqEI5z02JNDeSxHtCMOSUvBpxwxG5ubsNEc0KuKyM";
 var pages = ['&sheet=acceleration', '&sheet=position', '&sheet=gas-pres', '&sheet=oil-temp', '&sheet=cvt', '&sheet=force', '&sheet=brake-pres', '&sheet=shock-disp', '&sheet=steering-disp'];
 var API_KEY = 'AIzaSyBMiJQmBE6uxyrHau_zmKpuetSLPA-Sj78';
 var folderId = '1jFpcWj_H572aSLbYFWozFMCz7A6JngC-';
+var fileName ='TestData'
 
 // Wrapper function to draw each chart we wil need
 function drawCharts() {
@@ -326,8 +327,8 @@ function setRadioListeners() {
         var arOfVals = $(this).parent().nextAll().map(function () {
             return $(this).text();
         }).get();
-        console.log(arOfVals[2]);
         fileID = arOfVals[2];
+        $("#file-name")[0].innerHTML = arOfVals[0];
     });
 
 }
@@ -358,7 +359,4 @@ document.Test = function() {
     }).fail(function(){
         console.log("Test 2 : FAILED")
     });
-
-    // Test 3 : Test Get bad fileID
-
 }
