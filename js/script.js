@@ -14,7 +14,11 @@ var fileName ='TestData'
 function drawCharts() {
     // request url
     var url = "https://docs.google.com/spreadsheets/d/"+fileID+"/edit?usp=sharing";
-    var query = new google.visualization.Query(url+pages[0]);
+
+    var query = new google.visualization.Query(url);
+    query.send(handle);
+    
+    /*var query = new google.visualization.Query(url+pages[0]);
     query.send(handleQueryResponseAcceleration);
 
     var query = new google.visualization.Query(url+pages[1]);
@@ -39,7 +43,7 @@ function drawCharts() {
     query.send(handleQueryResponseShockDisp);
     
     var query = new google.visualization.Query(url+pages[8]);
-    query.send(handleQueryResponseSteeringDisp);
+    query.send(handleQueryResponseSteeringDisp);*/
 }
 
 /*
@@ -47,6 +51,23 @@ function drawCharts() {
     Group of funtions that create each graph.
 
 */
+
+function handle(response) {
+    console.log(response.getDataTable());
+    var otable = response.getDataTable();
+    for(i = 1; i < 10; i++) {
+        var t = otable.clone();
+        if(i != 1) {
+            t.removeColumns(1, i-1);
+        }
+        if(i != 9) {
+            t.removeColumns(i+1, 9-i);
+        }
+
+        console.log(t);
+    }
+}
+
 function handleQueryResponseAcceleration(response) {
     if (response.isError()) {
         console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
@@ -56,6 +77,7 @@ function handleQueryResponseAcceleration(response) {
     var options = {
         title: 'Acceleration Chart',
         curveType: 'function',
+        interpolateNulls: true,
         legend: { position: 'bottom' }
     };
 
