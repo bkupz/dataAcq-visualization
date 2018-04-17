@@ -14,6 +14,7 @@ var fileName ='TestData'
 // Wrapper function to draw each chart we wil need
 function drawCharts() {
     var tasks = [];
+    dataList = [];
     // request url
 
     var selectedData = getCheckedBoxes("checkboxName");
