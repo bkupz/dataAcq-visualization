@@ -100,6 +100,12 @@ function handle(response) {
 
 //this joins 2 dataTable arrays (output of handle) if they have the same Column headers i.e. joins 2 different sheets if they both have headers 'acceleraton'
 function twoFilesSelected(dataArray1, dataArray2){
+    console.log("array   1");
+    console.log(dataArray1);
+    console.log("len 1:"+ dataArray1.length);
+    console.log("array   2");
+    console.log(dataArray2);
+    console.log("len 2:"+ dataArray2.length);
     var finalDataArray = new Array();
     for(i = 0; i < dataArray1.length; i++){
         for(j = 0; j < dataArray2.length; j++){
@@ -107,16 +113,14 @@ function twoFilesSelected(dataArray1, dataArray2){
                 console.log(dataArray2[i].ng[1].label)
                 //combines the two charts to be graphed on the same chart
                 var newTable = new google.visualization.data.join(dataArray1[i], dataArray2[j], 'full', [[0,0]],[1],[1]);
-                
-                console.log(newTable);
 
-                drawChartsDataArray([newTable]);
-
-                console.log("charts updated");
-
+                finalDataArray.push(newTable);    
             }
         }
     }
+    console.log(finalDataArray);
+    drawChartsDataArray(finalDataArray);
+    console.log("charts updated");
 }
 
 function drawChartsDataArray(dataArray){
