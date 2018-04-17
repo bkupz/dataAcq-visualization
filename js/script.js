@@ -4,7 +4,8 @@ google.charts.setOnLoadCallback(drawCharts);
 
 // Global variables to be used throughout the script
 var firstTime = true;
-var fileID ="1_JFqEI5z02JNDeSxHtCMOSUvBpxwxG5ubsNEc0KuKyM";
+var fileID = "1_JFqEI5z02JNDeSxHtCMOSUvBpxwxG5ubsNEc0KuKyM";
+var dataList = new Array();
 var pages = ['&sheet=acceleration', '&sheet=position', '&sheet=gas-pres', '&sheet=oil-temp', '&sheet=cvt', '&sheet=force', '&sheet=brake-pres', '&sheet=shock-disp', '&sheet=steering-disp'];
 var API_KEY = 'AIzaSyBMiJQmBE6uxyrHau_zmKpuetSLPA-Sj78';
 var folderId = '1jFpcWj_H572aSLbYFWozFMCz7A6JngC-';
@@ -12,233 +13,143 @@ var fileName ='TestData'
 
 // Wrapper function to draw each chart we wil need
 function drawCharts() {
+    var tasks = [];
     // request url
-    var url = "https://docs.google.com/spreadsheets/d/"+fileID+"/edit?usp=sharing";
 
-    var query = new google.visualization.Query(url);
-    query.send(handle);
-    
-    /*var query = new google.visualization.Query(url+pages[0]);
-    query.send(handleQueryResponseAcceleration);
+    var selectedData = getCheckedBoxes("checkboxName");
 
-    var query = new google.visualization.Query(url+pages[1]);
-    query.send(handleQueryResponsePosition);
+    //if no chart is selected it uses the default global fileID or if 1 sheet is selected
+    if(selectedData == null || selectedData.length == 1){
+        console.log("selectedData was null");
+        var tsk = new Promise(function(resolve,reject) {
+            if (selectedData == null){
+                var fileIdentifier = fileID;
+            }
+            else
+                var fileIdentifier = selectedData[0].id;
+            //////this section could be refactored to use loadData() function 
+            var url = "https://docs.google.com/spreadsheets/d/"+fileIdentifier+"/edit?usp=sharing";
+            var query = new google.visualization.Query(url);
+            query.send(function (somedata){
+                var dat = handle(somedata);
+                
+                drawChartsDataArray(dat);
+            });
+            //////////////
+        });
+        
+    }else{
+        // this is if 2 sheets are selected it gets both of them and then 
+        for(i = 0; i < selectedData.length; i++){
+            var tsk = loadData(selectedData[i].id).then(function () {
+            }).catch(function(err){
+                //here you can get an error
+                console.log("ERROR OCCURED"+err);
+            });
+            tasks.push(tsk);     
+        }
 
-    var query = new google.visualization.Query(url+pages[2]);
-    query.send(handleQueryResponseGasPres);
-    
-    var query = new google.visualization.Query(url+pages[3]);
-    query.send(handleQueryResponseOilTemp);
-    
-    var query = new google.visualization.Query(url+pages[4]);
-    query.send(handleQueryResponseCVT);
-    
-    var query = new google.visualization.Query(url+pages[5]);
-    query.send(handleQueryResponseForce);
-    
-    var query = new google.visualization.Query(url+pages[6]);
-    query.send(handleQueryResponseBrakePres);
-    
-    var query = new google.visualization.Query(url+pages[7]);
-    query.send(handleQueryResponseShockDisp);
-    
-    var query = new google.visualization.Query(url+pages[8]);
-    query.send(handleQueryResponseSteeringDisp);*/
+        Promise.all(tasks).then(function(){
+            console.log("tasks complete");
+            twoFilesSelected(dataList[0],dataList[1]);
+        });   
+    }
 }
 
-/*
+//this gets data from google spreadsheet and puts it into a global array dataList needs to be an array if more than 1 sheet is selected
+function loadData(ID) {
+    return new Promise (function (resolve,reject){
+        var url = "https://docs.google.com/spreadsheets/d/"+ID+"/edit?usp=sharing";
+        var query = new google.visualization.Query(url);
+        query.send(function(someData) {
+            //...
+            var dat = handle(someData);
+            dataList.push(dat);
+            return resolve(someData);
+        });
+    })
+  }
 
-    Group of funtions that create each graph.
-
-*/
-
+//creates array of dataTables that are ready to be graphed 
 function handle(response) {
-    console.log(response.getDataTable());
+    if (response.isError()) {
+        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+        return;
+    }
+    
     var otable = response.getDataTable();
-    for(i = 1; i < 10; i++) {
+    var dataArray = new Array();
+    for(i = 1; i < otable.ng.length; i++) {
         var t = otable.clone();
-        if(i != 1) {
-            t.removeColumns(1, i-1);
+
+        for(j = 1; j < otable.ng.length; j++) {
+            if (j < i){
+                t.removeColumn(1);
+            }
+            if(j > i){
+                t.removeColumn(2);
+            } 
         }
-        if(i != 9) {
-            t.removeColumns(i+1, 9-i);
+        if (t.ng[1].type == "number"){
+            dataArray.push(t);
         }
-
-        console.log(t);
     }
-}
-
-function handleQueryResponseAcceleration(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-    }
-
-    var options = {
-        title: 'Acceleration Chart',
-        curveType: 'function',
-        interpolateNulls: true,
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
     
-    var id = 'acceleration-chart';
+    return dataArray;
+}
+
+//this joins 2 dataTable arrays (output of handle) if they have the same Column headers i.e. joins 2 different sheets if they both have headers 'acceleraton'
+function twoFilesSelected(dataArray1, dataArray2){
+    var finalDataArray = new Array();
+    for(i = 0; i < dataArray1.length; i++){
+        for(j = 0; j < dataArray2.length; j++){
+            if(dataArray1[i].ng[1].label == dataArray2[j].ng[1].label){
+                console.log(dataArray2[i].ng[1].label)
+                //combines the two charts to be graphed on the same chart
+                var newTable = new google.visualization.data.join(dataArray1[i], dataArray2[j], 'full', [[0,0]],[1],[1]);
+                
+                console.log(newTable);
+
+                drawChartsDataArray([newTable]);
+
+                console.log("charts updated");
+
+            }
+        }
+    }
+}
+
+function drawChartsDataArray(dataArray){
+    clearCharts();
+    console.log(dataArray);
+    for(i = 0; i < dataArray.length; i++){
+        var options = {
+            title: dataArray[i].ng[1].label,
+            curveType: 'function',
+            interpolateNulls: true,
+            legend: { position: 'bottom' },
+            explorer: { 
+                actions: ['dragToZoom', 'rightClickToReset'],
+                keepInBounds: true,
+                maxZoomIn: 4.0
+            }
+        };
     
-    drawChart(data, options, id);
-}
+        var data = dataArray[i];
+        //the chart id is being set here to some static id's because i didnt have time to make them dynamic
+        //this might have to change because we need to see the charts update
+        var id = "id"+i.toString();
 
-function handleQueryResponsePosition(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
+        drawChart(data, options, id);
     }
-
-    var options = {
-        title: 'Position Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'position-chart'
-    drawChart(data, options, id);
 }
 
-function handleQueryResponseGasPres(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
+function clearCharts()
+{
+    for(i = 0; i <= 15; i ++){
+        document.getElementById("id"+i.toString()).innerHTML = "";
     }
-
-    var options = {
-        title: 'Gas Pedal Pressure Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'gas-pre-chart';
-    drawChart(data, options, id);
 }
-
-function handleQueryResponseOilTemp(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-    }
-
-    var options = {
-        title: 'Oil Tempuratue Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'oil-temp-chart';
-    drawChart(data, options, id);
-}
-
-function handleQueryResponseCVT(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-    }
-
-    var options = {
-        title: 'CVT Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'cvt-chart';
-    drawChart(data, options, id);
-}
-
-function handleQueryResponseForce(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-    }
-
-    var options = {
-        title: 'Force Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'force-chart';
-    drawChart(data, options, id);
-}
-
-function handleQueryResponseBrakePres(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-    }
-
-    var options = {
-        title: 'Brake Pressue Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'brake-pre-chart';
-    drawChart(data, options, id);
-}
-
-
-function handleQueryResponseShockDisp(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-    }
-
-    var options = {
-        title: 'Shock Displacement Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'shock-disp-chart';
-    drawChart(data, options, id);
-}
-
-
-function handleQueryResponseSteeringDisp(response) {
-    if (response.isError()) {
-        console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
-    }
-
-    var options = {
-        title: 'Steering Displacment Chart',
-        curveType: 'function',
-        legend: { position: 'bottom' }
-    };
-
-    var data = response.getDataTable();
-
-    var id = 'steering-disp-chart';
-    drawChart(data, options, id);
-}
-
-/*
-
-    End of the group.
-
-*/
 
 // Draws a chart
 function drawChart(data, options, id) {
@@ -260,6 +171,7 @@ function switchToGetFile() {
 function switchToMain() {
     $("#container-main").css("display", "block");
     $("#container-getFile").css("display", "none");
+
     drawCharts();
 }
 
@@ -299,7 +211,8 @@ function listFilesInConsole() {
             var tr = document.createElement('tr');
             
             var td = document.createElement('td');
-            td.appendChild(createRadioElement("selection", 1))
+            //td.appendChild(createRadioElement("selection", 1))
+            td.appendChild(createNewCheckboxt("checkboxName", data.files[i].id))
             tr.appendChild(td)
 
             var td = document.createElement('td');
@@ -342,6 +255,30 @@ function createRadioElement(name, checked) {
 
     return radioFragment.firstChild;
 }
+
+//Create a checkbox
+function createNewCheckboxt(name, id){
+    var checkbox = document.createElement('input'); 
+    checkbox.type= 'checkbox';
+    checkbox.name = name;
+    checkbox.id = id;
+    return checkbox;
+}
+
+//get all checked checkboxes
+function getCheckedBoxes(chkboxName) {
+    var checkboxes = document.getElementsByName(chkboxName);
+    var checkboxesChecked = [];
+    // loop over them all
+    for (var i=0; i<checkboxes.length; i++) {
+       // And stick the checked ones onto an array...
+       if (checkboxes[i].checked) {
+          checkboxesChecked.push(checkboxes[i]);
+       }
+    }
+    // Return the array if it is non-empty, or null
+    return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+  }
 
 // Create a listener for changes in the radio buttons
 function setRadioListeners() {
