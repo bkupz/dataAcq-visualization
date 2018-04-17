@@ -14,7 +14,7 @@ var fileName ='TestData'
 // Wrapper function to draw each chart we wil need
 function drawCharts() {
     var tasks = [];
-    dataList = [];
+    dataList = new Array();
     // request url
 
     var selectedData = getCheckedBoxes("checkboxName");
@@ -101,17 +101,17 @@ function handle(response) {
 
 //this joins 2 dataTable arrays (output of handle) if they have the same Column headers i.e. joins 2 different sheets if they both have headers 'acceleraton'
 function twoFilesSelected(dataArray1, dataArray2){
-    console.log("array   1");
-    console.log(dataArray1);
-    console.log("len 1:"+ dataArray1.length);
-    console.log("array   2");
-    console.log(dataArray2);
-    console.log("len 2:"+ dataArray2.length);
     var finalDataArray = new Array();
     for(i = 0; i < dataArray1.length; i++){
         for(j = 0; j < dataArray2.length; j++){
+            if(dataArray1[i] == undefined){
+                console.log("dataArray1["+i.toString()+"] was undef");
+            }
+            if(dataArray2[j] == undefined){
+                console.log("dataArray2["+j.toString()+"] was undef");
+            }
             if(dataArray1[i].ng[1].label == dataArray2[j].ng[1].label){
-                console.log(dataArray2[i].ng[1].label)
+                console.log(dataArray2[j].ng[1].label)
                 //combines the two charts to be graphed on the same chart uses the time column to combine on i.e. [[0,0]] and the first columns in each table i.e. [1], [1]
                 var newTable = new google.visualization.data.join(dataArray1[i], dataArray2[j], 'full', [[0,0]],[1],[1]);
 
