@@ -82,6 +82,7 @@ function handle(response) {
     for(i = 1; i < otable.ng.length; i++) {
         var t = otable.clone();
 
+        //removes all the columns except the time which HAS to ALWAYS be column 1 and the data column
         for(j = 1; j < otable.ng.length; j++) {
             if (j < i){
                 t.removeColumn(1);
@@ -94,7 +95,6 @@ function handle(response) {
             dataArray.push(t);
         }
     }
-    
     return dataArray;
 }
 
@@ -111,7 +111,7 @@ function twoFilesSelected(dataArray1, dataArray2){
         for(j = 0; j < dataArray2.length; j++){
             if(dataArray1[i].ng[1].label == dataArray2[j].ng[1].label){
                 console.log(dataArray2[i].ng[1].label)
-                //combines the two charts to be graphed on the same chart
+                //combines the two charts to be graphed on the same chart uses the time column to combine on i.e. [[0,0]] and the first columns in each table i.e. [1], [1]
                 var newTable = new google.visualization.data.join(dataArray1[i], dataArray2[j], 'full', [[0,0]],[1],[1]);
 
                 finalDataArray.push(newTable);    
@@ -123,6 +123,7 @@ function twoFilesSelected(dataArray1, dataArray2){
     console.log("charts updated");
 }
 
+//takes array of Google DataTables and graphs them
 function drawChartsDataArray(dataArray){
     clearCharts();
     console.log(dataArray);
@@ -148,6 +149,7 @@ function drawChartsDataArray(dataArray){
     }
 }
 
+//clears charts out on every time the main page is selected
 function clearCharts()
 {
     for(i = 0; i <= 15; i ++){
@@ -215,7 +217,6 @@ function listFilesInConsole() {
             var tr = document.createElement('tr');
             
             var td = document.createElement('td');
-            //td.appendChild(createRadioElement("selection", 1))
             td.appendChild(createNewCheckboxt("checkboxName", data.files[i].id))
             tr.appendChild(td)
 
@@ -237,27 +238,10 @@ function listFilesInConsole() {
         tbl.appendChild(tbdy);
         container.appendChild(tbl)
         document.data = data;
-
-        // Create on change function for radio buttons
-        setRadioListeners();
         
     }).fail(function(){
         console.log("ERROR: getting files");
     });
-}
-
-// Create radio button
-function createRadioElement(name, checked) {
-    var radioHtml = '<input type="radio" name="' + name + '"';
-    if ( checked ) {
-        radioHtml += ' checked="checked"';
-    }
-    radioHtml += '/>';
-
-    var radioFragment = document.createElement('div');
-    radioFragment.innerHTML = radioHtml;
-
-    return radioFragment.firstChild;
 }
 
 //Create a checkbox
@@ -283,18 +267,6 @@ function getCheckedBoxes(chkboxName) {
     // Return the array if it is non-empty, or null
     return checkboxesChecked.length > 0 ? checkboxesChecked : null;
   }
-
-// Create a listener for changes in the radio buttons
-function setRadioListeners() {
-    $(document).on('change', ':radio[name="selection"]:checked', function () {
-        var arOfVals = $(this).parent().nextAll().map(function () {
-            return $(this).text();
-        }).get();
-        fileID = arOfVals[2];
-        $("#file-name")[0].innerHTML = arOfVals[0];
-    });
-
-}
 
 // Function to test requests
 document.Test = function() {
