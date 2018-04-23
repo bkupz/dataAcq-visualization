@@ -137,7 +137,6 @@ function drawChartsDataArray(dataArray){
             explorer: { 
                 actions: ['dragToZoom', 'rightClickToReset'],
                 keepInBounds: true,
-                maxZoomIn: 4.0
             }
         };
     
