@@ -214,26 +214,28 @@ function listFilesInConsole() {
 
         // Loop through files and create an entry for each
         for(i = 0; i<length; i++) {
-            var tr = document.createElement('tr');
-            
-            var td = document.createElement('td');
-            td.appendChild(createNewCheckboxt("checkboxName", data.files[i].id))
-            tr.appendChild(td)
+            if(data.files[i].mimeType == "application/vnd.google-apps.spreadsheet") {
+                var tr = document.createElement('tr');
+                
+                var td = document.createElement('td');
+                td.appendChild(createNewCheckboxt("checkboxName", data.files[i].id))
+                tr.appendChild(td)
 
-            var td = document.createElement('td');
-            td.appendChild(document.createTextNode(data.files[i].name))
-            tr.appendChild(td)
+                var td = document.createElement('td');
+                td.appendChild(document.createTextNode(data.files[i].name))
+                tr.appendChild(td)
 
-            var td1 = document.createElement('td');
-            td1.appendChild(document.createTextNode(data.files[i].mimeType))
-            tr.appendChild(td1)
+                var td1 = document.createElement('td');
+                td1.appendChild(document.createTextNode(data.files[i].mimeType))
+                tr.appendChild(td1)
 
-            var td2 = document.createElement('td');
-            td2.className = "id";
-            td2.appendChild(document.createTextNode(data.files[i].id))
-            tr.appendChild(td2)
+                var td2 = document.createElement('td');
+                td2.className = "id";
+                td2.appendChild(document.createTextNode(data.files[i].id))
+                tr.appendChild(td2)
 
-            tbdy.appendChild(tr);
+                tbdy.appendChild(tr);
+            }
         }
         tbl.appendChild(tbdy);
         container.appendChild(tbl)
