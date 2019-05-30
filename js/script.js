@@ -84,7 +84,7 @@ function handle(response) {
         var t = otable.clone();
 
         //removes all the columns except the time which HAS to ALWAYS be column 1 and the data column
-        for(j = 1; j < otable.ng.length; j++) {
+        for(j = 1; j < otable.wg.length; j++) {
             if (j < i){
                 t.removeColumn(1);
             }
@@ -92,7 +92,7 @@ function handle(response) {
                 t.removeColumn(2);
             } 
         }
-        if (t.ng[1].type == "number"){
+        if (t.wg[1].type == "number"){
             dataArray.push(t);
         }
     }
@@ -110,8 +110,8 @@ function twoFilesSelected(dataArray1, dataArray2){
             if(dataArray2[j] == undefined){
                 console.log("dataArray2["+j.toString()+"] was undef");
             }
-            if(dataArray1[i].ng[1].label == dataArray2[j].ng[1].label){
-                console.log(dataArray2[j].ng[1].label)
+            if(dataArray1[i].wg[1].label == dataArray2[j].wg[1].label){
+                console.log(dataArray2[j].wg[1].label)
                 //combines the two charts to be graphed on the same chart uses the time column to combine on i.e. [[0,0]] and the first columns in each table i.e. [1], [1]
                 var newTable = new google.visualization.data.join(dataArray1[i], dataArray2[j], 'full', [[0,0]],[1],[1]);
 
@@ -130,7 +130,7 @@ function drawChartsDataArray(dataArray){
     console.log(dataArray);
     for(i = 0; i < dataArray.length; i++){
         var options = {
-            title: dataArray[i].ng[1].label,
+            title: dataArray[i].wg[1].label,
             curveType: 'function',
             interpolateNulls: true,
             legend: { position: 'bottom' },
