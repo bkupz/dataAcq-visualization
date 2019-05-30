@@ -80,7 +80,7 @@ function handle(response) {
     
     var otable = response.getDataTable();
     var dataArray = new Array();
-    for(i = 1; i < otable.ng.length; i++) {
+    for(i = 1; i < otable.wg.length; i++) {
         var t = otable.clone();
 
         //removes all the columns except the time which HAS to ALWAYS be column 1 and the data column
